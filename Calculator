@@ -1,0 +1,114 @@
+//
+//  main.cpp
+//  ExpCalculator
+//
+//  Created by Thomas Tsang on 13-11-6.
+//  Copyright (c) 2013年 thomas. All rights reserved.
+//
+
+#include <iostream>
+#include <stack>
+#include <map>
+
+
+using namespace std;
+
+class EInvalidExp{};
+class EDividedByZero{};
+
+int compare_priority(char op_a, char op_b)
+{
+    static map<char, int> operators_priority;
+    operators_priority['='] = 0;
+    operators_priority['+'] = 1;
+    operators_priority['-'] = 1;
+    operators_priority['*'] = 2;
+    operators_priority['/'] = 2;
+    
+    return operators_priority[op_a] - operators_priority[op_b];
+}
+
+int simple_calculate(char op, int num1, int num2)
+{
+    if (op == '+')
+        return num1 + num2;
+    else if (op == '*')
+        return num1 * num2;
+    else if (op == '-')
+        return num2 - num1;
+    else if (op == '/'){
+        if (num1 == 0)
+            throw EDividedByZero();
+        return num2 / num1;
+    }
+    else
+        throw EInvalidExp();
+        
+}
+
+int calulate(string s)
+{   
+    stack<char> operators;
+    stack<int> operands;
+    int num = 0;
+    string::const_iterator it = s.begin();
+    while(it != s.end()){
+        if (!isblank(*it)){
+            if (isnumber(*it))
+                num = num * 10 + (*it - '0');
+            else{
+                operands.push(num);
+                num = 0;
+                char op = *it;
+                while(operators.size() > 0){
+                    char top_op = operators.top();
+                    //compare the priority between current operator's and
+                    //stack top operators's,if less then do calulation.
+                    if (compare_priority(op, top_op) > 0)
+                        break;
+                    operators.pop();
+                    if (operands.size() < 2)
+                        throw EInvalidExp();
+                    
+                    
+                    int num1 = operands.top();
+                    operands.pop();
+                    int num2 = operands.top();
+                    operands.pop();
+                    operands.push(simple_calculate(top_op, num1, num2));
+                    
+                    
+                }
+                if (*it != '=')
+                    operators.push(*it);
+            }
+        }
+        it++;
+    }
+    
+    
+    if (operators.size() > 0 || operands.size() > 1)
+        throw EInvalidExp();
+    
+    return operands.top();
+}
+
+
+int main(int argc, const char * argv[])
+{    
+    cout << "Please input a expression:" << endl;
+    string exp;
+    getline(cin, exp);
+    try{
+        cout << calulate(exp) << endl;
+    }catch(EDividedByZero){
+        cerr << "divided by  zero!" << endl;
+    }
+    catch(EInvalidExp){
+        cerr << "invalid expression, format ref:12 + 2 * 12 + 15 =" << endl;
+    }
+    
+    
+    return 0;
+}
+
