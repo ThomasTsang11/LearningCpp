@@ -1,3 +1,12 @@
 I have finished the first part and the most of second part of The C++ Programming Language
 by creator of C++, Bjarne Stroupstrup. The most valuable things I got was the author's opinions 
 on Learning C++, and also the best pratice of using C++.
+
+1) Focus on concepts but language details while learning C++.
+2) Base on C++ Standard Libary but fundamental language facilities while builing your projects.
+3) Clearly understand the programming paradiagm that c++ provided:
+   3-1) Procedural Programming
+   3-2) Modular Programming
+   3-3) Data Abstraction
+   3-4) OOP
+   3-5) Generic Programming
